@@ -1,0 +1,17 @@
+=> 0x800c12:	mov    %eax,%edi
+0x00800c12 in ?? ()
+(gdb) si
+=> 0x800c14:	mov    %eax,%esi
+0x00800c14 in ?? ()
+(gdb) si
+=> 0x800c16:	int    $0x30
+
+Notice sys_exofork
+Notice page_fault_handler // still not familiar with it
+
+
+When running faultdie, there is wrong with spin_lock. 
+After comment DEBUG_SPINLOCK, it is ok
+?? 
+
+./lib/entry.S
