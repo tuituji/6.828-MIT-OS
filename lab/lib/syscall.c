@@ -128,3 +128,19 @@ sys_time_msec(void)
 {
 	return (unsigned int) syscall(SYS_time_msec, 0, 0, 0, 0, 0, 0);
 }
+
+int sys_net_try_send(void *data, uint32_t len)
+{
+	return syscall(SYS_net_try_send, 0 , (uint32_t)data, len, 0, 0, 0);
+}
+
+int
+sys_net_recv(void *data, int len)
+{
+    return syscall(SYS_net_recv, 1, (uintptr_t) data, (uint32_t) len, 0, 0, 0);
+}
+
+int sys_get_mac(uint32_t *low, uint32_t *hign)
+{
+	return syscall(SYS_get_mac, 1, (uintptr_t)low, (uintptr_t)hign, 0, 0, 0);
+}

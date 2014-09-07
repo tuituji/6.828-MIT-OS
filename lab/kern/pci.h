@@ -8,6 +8,7 @@ enum { pci_res_bus, pci_res_mem, pci_res_io, pci_res_max };
 
 struct pci_bus;
 
+// pci_func is like  pci_dev in linux kernel
 struct pci_func {
     struct pci_bus *bus;	// Primary bus for bridges
 

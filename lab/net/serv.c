@@ -316,7 +316,7 @@ umain(int argc, char **argv)
 	envid_t ns_envid = sys_getenvid();
 
 	binaryname = "ns";
-
+	cprintf("in umain\n");
 	// fork off the timer thread which will send us periodic messages
 	timer_envid = fork();
 	if (timer_envid < 0)
@@ -325,6 +325,7 @@ umain(int argc, char **argv)
 		timer(ns_envid, TIMER_INTERVAL);
 		return;
 	}
+	cprintf("timer: 0x%x\n", timer_envid);
 
 	// fork off the input thread which will poll the NIC driver for input
 	// packets
@@ -335,6 +336,7 @@ umain(int argc, char **argv)
 		input(ns_envid);
 		return;
 	}
+	cprintf("input: 0x%x\n", input_envid);
 
 	// fork off the output thread that will send the packets to the NIC
 	// driver
@@ -345,6 +347,7 @@ umain(int argc, char **argv)
 		output(ns_envid);
 		return;
 	}
+	cprintf("output: 0x%x\n", output_envid);
 
 	// lwIP requires a user threading library; start the library and jump
 	// into a thread to continue initialization.

@@ -116,6 +116,7 @@ trap_init(void)
     SETGATE(idt[T_MCHK], 1, GD_KT, _trap_mchk, 0);
     SETGATE(idt[T_SIMDERR], 1, GD_KT, _trap_simd, 0);
 
+	
 	extern void _trap_timer();
 	SETGATE(idt[IRQ_OFFSET + IRQ_TIMER], 0, GD_KT, _trap_timer, 0);
 
@@ -293,6 +294,7 @@ trap_dispatch(struct Trapframe *tf)
 	// LAB 4: Your code here.
 	if (tf->tf_trapno == IRQ_OFFSET + IRQ_TIMER) {
 		//cprintf("timer interrupt come\n");
+		time_tick();
 		lapic_eoi();
 		sched_yield();
 	}

@@ -20,6 +20,7 @@ fs_test(void)
 	bits = (uint32_t*) PGSIZE;
 	memmove(bits, bitmap, PGSIZE);
 	// allocate block
+	cprintf("to allocate block\n");
 	if ((r = alloc_block()) < 0)
 		panic("alloc_block: %e", r);
 	// check that block was free

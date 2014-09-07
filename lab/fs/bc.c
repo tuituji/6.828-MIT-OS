@@ -49,8 +49,18 @@ bc_pgfault(struct UTrapframe *utf)
 	// the page dirty).
 	//
 	// LAB 5: Your code here
-	panic("bc_pgfault not implemented");
+//	panic("bc_pgfault not implemented");
+	int perm = PTE_P | PTE_U | PTE_W;
+	envid_t id = thisenv->env_id;
+	void *baddr = diskaddr(blockno);
+	r = sys_page_alloc(id, baddr, perm);
+	assert(r == 0);
+	
+	r = ide_read(blockno * BLKSECTS, baddr, BLKSECTS);
+	assert(r == 0);
 
+	r = sys_page_map(id, baddr, id, baddr, perm);
+	assert(r == 0);
 	// Check that the block we read was allocated. (exercise for
 	// the reader: why do we do this *after* reading the block
 	// in?)
@@ -69,12 +79,28 @@ void
 flush_block(void *addr)
 {
 	uint32_t blockno = ((uint32_t)addr - DISKMAP) / BLKSIZE;
-
+	int ret;
 	if (addr < (void*)DISKMAP || addr >= (void*)(DISKMAP + DISKSIZE))
 		panic("flush_block of bad va %08x", addr);
 
 	// LAB 5: Your code here.
-	panic("flush_block not implemented");
+//	panic("flush_block not implemented");
+	// check if the addr is mapped and is dirty
+	void *baddr = diskaddr(blockno);
+	int id = thisenv->env_id; 
+	// addr not mapped
+	if ((vpd[PDX(baddr)] & PTE_P) != PTE_P ||
+		(vpt[PGNUM(baddr)] & PTE_P) != PTE_P)
+		return;
+	// not dirty
+	if ((vpt[PGNUM(baddr)] & PTE_D)!= PTE_D)
+		return;
+	// mapped and dirty
+	ret = ide_write(blockno * BLKSECTS, baddr, BLKSECTS);
+	assert(ret == 0);
+
+	ret = sys_page_map(id, baddr, id, baddr, PTE_P | PTE_U | PTE_W);
+	assert(ret == 0);
 }
 
 // Test that the block cache works, by smashing the superblock and

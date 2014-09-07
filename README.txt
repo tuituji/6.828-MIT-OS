@@ -7,5 +7,5 @@ Lab1 finished
 Lab2 finished
 Lab3 finished
 Lab4 finished
-Lab5 waiting to do
-Lab6 waiting to do
+Lab5 finished some
+Lab6 finished some

@@ -12,6 +12,7 @@
 #include <kern/console.h>
 #include <kern/sched.h>
 #include <kern/time.h>
+#include <kern/e1000.h>
 
 // Print a string to the system console.
 // The string is exactly 'len' characters long.
@@ -490,8 +491,34 @@ static int
 sys_time_msec(void)
 {
 	// LAB 6: Your code here.
-	panic("sys_time_msec not implemented");
+//	panic("sys_time_msec not implemented");
+	return time_msec();
 }
+
+
+static int
+sys_net_try_send(void* data, uint32_t len)
+{
+	assert((uintptr_t)data < UTOP);
+	return e1000_tx((uint8_t*)data, len);
+}
+
+static int
+sys_net_recv(void *data, int len)
+{
+	assert((uintptr_t)data < UTOP);
+	return e1000_rx((uint8_t*)data, len);
+}
+
+
+static int
+sys_get_mac(uint32_t *low, uint32_t *high)
+{
+	*low = e1000_readl(E1000_RAL);
+	*high = e1000_readl(E1000_RAH) & 0xffff;
+	return 0;
+}
+
 
 // Dispatches to the correct kernel function, passing the arguments.
 int32_t
@@ -536,6 +563,18 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 			break;
 		case SYS_ipc_try_send:
 			return sys_ipc_try_send(a1, a2, (void*)a3, a4);
+			break;
+		case SYS_time_msec:
+			return sys_time_msec();
+			break;
+		case SYS_net_try_send:
+			return sys_net_try_send((void*)a1, a2);
+			break;
+		case SYS_net_recv:
+			return sys_net_recv((void*)a1, a2);
+			break;
+		case SYS_get_mac:
+			return sys_get_mac((uint32_t *) a1, (uint32_t *) a2);
 			break;
 		default:
 			cprintf("syscall %d not implemented\n", syscallno);
